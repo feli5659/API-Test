@@ -1,51 +1,28 @@
-// Import the required packages
-const express = require("express");
-const axios = require("axios");
-const dotenv = require("dotenv");
+require('dotenv').config(); // Load environment variables from .env
+const axios = require('axios'); // Import Axios
 
-// Load environment variables from .env file
-dotenv.config();
+// Ensure your .env file contains something like: OPENAI_API_KEY=your_api_key_here
 
-const app = express();
-const PORT = process.env.PORT || 3000;
+const apiKey = process.env.OPENAI_API_KEY; // Access the API key from the environment variables
 
-// Middleware to serve static files
-app.use(express.static("public"));
+const prompt = "Write an engaging landing page text based on the keyword: digital-marketing.";
 
-// Endpoint to fetch generated text
-app.get("/generate", async (req, res) => {
-  const keyword = req.query.keyword;
+const requestData = {
+    model: "text-davinci-003",
+    prompt: prompt,
+    max_tokens: 150,
+    temperature: 0.7
+};
 
-  if (!keyword) {
-    return res.status(400).json({ error: "Keyword is required in the URL as a query parameter." });
-  }
-
-  try {
-    const response = await axios.post(
-      "https://api.openai.com/v1/completions",
-      {
-        model: "text-davinci-003", // Choose the model you want to use
-        prompt: `Write an engaging landing page text based on the keyword: ${keyword}.`,
-        max_tokens: 150,
-        temperature: 0.7,
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-        },
-      }
-    );
-
-    const generatedText = response.data.choices[0].text.trim();
-    res.json({ keyword, text: generatedText });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Failed to generate text." });
-  }
-});
-
-// Start the server
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
-});
+axios.post('https://api.openai.com/v1/completions', requestData, {
+    headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`
+    }
+})
+    .then(response => {
+        console.log(response.data);
+    })
+    .catch(error => {
+        console.error(error.response ? error.response.data : error.message);
+    });
