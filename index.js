@@ -12,11 +12,11 @@ async function generateText() {
       messages: [
         {
           role: "system",
-          content: "Du er en hjælpsom assistent, der skriver engagerende landingssider på dansk.",
+          content: "Du er en hjælpsom assistent, der skriver om hvad meta kan for b2c virksomheder.",
         },
         {
           role: "user",
-          content: "Skriv en engagerende landingsside baseret på nøgleordet: ${keyword}.",
+          content: "Skriv et engagerende paragraf baseret på nøgleordet: ${keyword}.",
         },
       ],
       max_tokens: 150,
